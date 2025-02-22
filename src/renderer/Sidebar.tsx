@@ -26,6 +26,9 @@ import { useSetAtom } from 'jotai'
 import * as atoms from './stores/atoms'
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
 import { trackingEvent } from './packages/event'
+import { useAtom } from 'jotai'
+import { sidebarVisibleAtom } from './stores/atoms'
+import MenuIcon from '@mui/icons-material/Menu'
 
 export const drawerWidth = 240
 
@@ -38,7 +41,7 @@ interface Props {
 export default function Sidebar(props: Props) {
     const { t } = useTranslation()
     const versionHook = useVersion()
-
+    const [sidebarVisible, setSidebarVisible] = useAtom(sidebarVisibleAtom)
     const sessionListRef = useRef<HTMLDivElement>(null)
     const handleCreateNewSession = () => {
         sessionActions.createEmpty('chat')
@@ -55,102 +58,118 @@ export default function Sidebar(props: Props) {
             className="fixed top-0 left-0 h-full z-50"
             style={{
                 boxSizing: 'border-box',
-                width: drawerWidth,
+                width: sidebarVisible ? drawerWidth : '48px',
                 borderRightWidth: '1px',
                 borderRightStyle: 'solid',
                 borderRightColor: theme.palette.divider,
+                transition: 'width 0.2s ease-in-out',
+                overflow: 'hidden',
             }}
         >
-            <div className="ToolBar h-full">
-                <Stack
-                    className="pt-3 pl-2 pr-1"
-                    sx={{
-                        height: '100%',
-                    }}
-                >
-                    <Box className="flex justify-between items-center px-2">
-                        <Box>
-                            <a
-                                href="https://github.com/Bin-Huang/chatbox"
-                                target="_blank"
-                                className="flex items-center no-underline"
-                            >
-                                <div className="flex flex-col items-start">
-                                    <span className="text-2xl font-medium">IChat</span>
-                                    <span className="text-[10px] opacity-50">Ai Chat</span>
-                                </div>
-                            </a>
-                        </Box>
-                    </Box>
-
-                    <SessionList sessionListRef={sessionListRef} />
-
-                    <Divider variant="fullWidth" />
-
-                    <MenuList sx={{ marginBottom: '20px' }}>
-                        <MenuItem onClick={handleCreateNewSession} sx={{ padding: '0.2rem 0.1rem', margin: '0.1rem' }}>
-                            <ListItemIcon>
-                                <IconButton>
-                                    <AddIcon fontSize="small" />
-                                </IconButton>
-                            </ListItemIcon>
-                            <ListItemText>{t('new chat')}</ListItemText>
-                            <Typography variant="body2" color="text.secondary">
-                                {/* ⌘N */}
-                            </Typography>
-                        </MenuItem>
-
-                        <MenuItem onClick={props.openCopilotWindow} sx={{ padding: '0.2rem 0.1rem', margin: '0.1rem' }}>
-                            <ListItemIcon>
-                                <IconButton>
-                                    <SmartToyIcon fontSize="small" />
-                                </IconButton>
-                            </ListItemIcon>
-                            <ListItemText>
-                                <Typography>{t('My Copilots')}</Typography>
-                            </ListItemText>
-                        </MenuItem>
-
-                        <MenuItem
-                            onClick={() => {
-                                props.setOpenSettingWindow('ai')
-                            }}
-                            sx={{ padding: '0.2rem 0.1rem', margin: '0.1rem' }}
-                        >
-                            <ListItemIcon>
-                                <IconButton>
-                                    <SettingsIcon fontSize="small" />
-                                </IconButton>
-                            </ListItemIcon>
-                            <ListItemText>{t('settings')}</ListItemText>
-                            <Typography variant="body2" color="text.secondary">
-                                {/* ⌘N */}
-                            </Typography>
-                        </MenuItem>
-
-                        <MenuItem onClick={props.openAboutWindow} sx={{ padding: '0.2rem 0.1rem', margin: '0.1rem' }}>
-                            <ListItemIcon>
-                                <IconButton>
-                                    <InfoOutlinedIcon fontSize="small" />
-                                </IconButton>
-                            </ListItemIcon>
-                            <ListItemText>
-                                <Badge
-                                    color="primary"
-                                    variant="dot"
-                                    invisible={!versionHook.needCheckUpdate}
-                                    sx={{ paddingRight: '8px' }}
+            {sidebarVisible ? (
+                <div className="ToolBar h-full">
+                    <Stack
+                        className="pt-3 pl-2 pr-1"
+                        sx={{
+                            height: '100%',
+                        }}
+                    >
+                        <Box className="flex justify-between items-center px-2 w-full">
+                            <Box className="flex-1">
+                                <a
+                                    href="https://github.com/Bin-Huang/chatbox"
+                                    target="_blank"
+                                    className="flex items-center no-underline"
                                 >
-                                    <Typography sx={{ opacity: 0.5 }}>
-                                        {t('About')}
-                                        {/\d/.test(versionHook.version) ? `(${versionHook.version})` : ''}
-                                    </Typography>
-                                </Badge>
-                            </ListItemText>
-                        </MenuItem>
-                    </MenuList>
+                                    <div className="flex flex-col items-start">
+                                        <span className="text-2xl font-medium">IChat</span>
+                                        <span className="text-[10px] opacity-50">Ai Chat</span>
+                                    </div>
+                                </a>
+                            </Box>
+                            <IconButton
+                                onClick={() => setSidebarVisible(false)}
+                            >
+                                <MenuOpenIcon />
+                            </IconButton>
+                        </Box>
+
+                        <SessionList sessionListRef={sessionListRef} />
+
+                        <Divider variant="fullWidth" />
+
+                        <MenuList sx={{ marginBottom: '20px' }}>
+                            <MenuItem onClick={handleCreateNewSession} sx={{ padding: '0.2rem 0.1rem', margin: '0.1rem' }}>
+                                <ListItemIcon>
+                                    <IconButton>
+                                        <AddIcon fontSize="small" />
+                                    </IconButton>
+                                </ListItemIcon>
+                                <ListItemText>{t('new chat')}</ListItemText>
+                                <Typography variant="body2" color="text.secondary">
+                                    {/* ⌘N */}
+                                </Typography>
+                            </MenuItem>
+
+                            <MenuItem onClick={props.openCopilotWindow} sx={{ padding: '0.2rem 0.1rem', margin: '0.1rem' }}>
+                                <ListItemIcon>
+                                    <IconButton>
+                                        <SmartToyIcon fontSize="small" />
+                                    </IconButton>
+                                </ListItemIcon>
+                                <ListItemText>
+                                    <Typography>{t('My Copilots')}</Typography>
+                                </ListItemText>
+                            </MenuItem>
+
+                            <MenuItem
+                                onClick={() => {
+                                    props.setOpenSettingWindow('ai')
+                                }}
+                                sx={{ padding: '0.2rem 0.1rem', margin: '0.1rem' }}
+                            >
+                                <ListItemIcon>
+                                    <IconButton>
+                                        <SettingsIcon fontSize="small" />
+                                    </IconButton>
+                                </ListItemIcon>
+                                <ListItemText>{t('settings')}</ListItemText>
+                                <Typography variant="body2" color="text.secondary">
+                                    {/* ⌘N */}
+                                </Typography>
+                            </MenuItem>
+
+                            <MenuItem onClick={props.openAboutWindow} sx={{ padding: '0.2rem 0.1rem', margin: '0.1rem' }}>
+                                <ListItemIcon>
+                                    <IconButton>
+                                        <InfoOutlinedIcon fontSize="small" />
+                                    </IconButton>
+                                </ListItemIcon>
+                                <ListItemText>
+                                    <Badge
+                                        color="primary"
+                                        variant="dot"
+                                        invisible={!versionHook.needCheckUpdate}
+                                        sx={{ paddingRight: '8px' }}
+                                    >
+                                        <Typography sx={{ opacity: 0.5 }}>
+                                            {t('About')}
+                                            {/\d/.test(versionHook.version) ? `(${versionHook.version})` : ''}
+                                        </Typography>
+                                    </Badge>
+                                </ListItemText>
+                            </MenuItem>
+                        </MenuList>
+                    </Stack>
+                </div>
+            ) : (
+                <Stack className="h-full pt-3">
+                    <IconButton onClick={() => setSidebarVisible(true)}>
+                        <MenuIcon />
+                    </IconButton>
                 </Stack>
-            </div>
+            )}
+
         </div>
     )
 }

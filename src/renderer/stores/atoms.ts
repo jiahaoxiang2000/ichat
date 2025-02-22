@@ -1,5 +1,6 @@
 import { atom, SetStateAction } from 'jotai'
-import { Session, Toast, Settings, CopilotDetail, Message, SettingWindowTab
+import {
+    Session, Toast, Settings, CopilotDetail, Message, SettingWindowTab
 } from '../../shared/types'
 import { selectAtom, atomWithStorage } from 'jotai/utils'
 import { focusAtom } from 'jotai-optics'
@@ -121,3 +122,5 @@ export const messageListRefAtom = atom<null | React.MutableRefObject<HTMLDivElem
 export const openSettingDialogAtom = atom<SettingWindowTab | null>(null)
 export const sessionCleanDialogAtom = atom<Session | null>(null)
 export const chatConfigDialogAtom = atom<Session | null>(null)
+
+export const sidebarVisibleAtom = atom<boolean>(false)
