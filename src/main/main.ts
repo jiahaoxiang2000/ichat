@@ -88,10 +88,20 @@ const createWindow = async () => {
         return path.join(RESOURCES_PATH, ...paths)
     }
 
-    mainWindow = new BrowserWindow({
-        show: false,
+    // Get saved bounds from store
+    const savedBounds = store.get('windowBounds', {
         width: 1000,
         height: 950,
+        x: undefined,
+        y: undefined,
+    })
+
+    mainWindow = new BrowserWindow({
+        show: false,
+        width: savedBounds.width,
+        height: savedBounds.height,
+        x: savedBounds.x,
+        y: savedBounds.y,
         icon: getAssetPath('icon.png'),
         webPreferences: {
             spellcheck: true,
@@ -101,6 +111,20 @@ const createWindow = async () => {
                 ? path.join(__dirname, 'preload.js')
                 : path.join(__dirname, '../../.erb/dll/preload.js'),
         },
+    })
+
+
+    // Save window bounds when they change
+    mainWindow.on('moved', () => {
+        if (!mainWindow) return
+        const bounds = mainWindow.getBounds()
+        store.set('windowBounds', bounds)
+    })
+
+    mainWindow.on('resized', () => {
+        if (!mainWindow) return
+        const bounds = mainWindow.getBounds()
+        store.set('windowBounds', bounds)
     })
 
     mainWindow.loadURL(resolveHtmlPath('index.html'))
