@@ -191,7 +191,7 @@
         ]
     },
     "build": {
-        "productName": "Chatbox CE",
+        "productName": "IChat",
         "appId": "xyz.chatboxapp.ce",
         "asar": true,
         "asarUnpack": "**\\*.{node,dll}",
