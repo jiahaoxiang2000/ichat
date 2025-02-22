@@ -6,7 +6,7 @@ import MessageList from './components/MessageList'
 import { drawerWidth } from './Sidebar'
 import Header from './components/Header'
 
-interface Props {}
+interface Props { }
 
 export default function MainPane(props: Props) {
     const currentSession = useAtomValue(atoms.currentSessionAtom)
